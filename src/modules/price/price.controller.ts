@@ -1,11 +1,15 @@
 import { Controller, Get, Query, BadRequestException, ServiceUnavailableException, Logger } from '@nestjs/common';
 import { PriceService } from './price.service';
+import { MetricsService } from '../metrics/metrics.service';
 
 @Controller('api/v1/price')
 export class PriceController {
   private readonly logger = new Logger(PriceController.name);
 
-  constructor(private readonly priceService: PriceService) {}
+  constructor(
+    private readonly priceService: PriceService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   @Get()
   async getCurrentPrice() {
@@ -16,6 +20,8 @@ export class PriceController {
     if (!latestPrice) {
       throw new ServiceUnavailableException('No price data available. Please try again later.');
     }
+
+    this.metricsService.currentBitcoinPrice.set(parseFloat(latestPrice.midPrice.toString()));
 
     const responseData = {
       success: true,
