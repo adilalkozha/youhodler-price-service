@@ -14,11 +14,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS prices (
     id SERIAL PRIMARY KEY,
     symbol VARCHAR(10) NOT NULL,
-    "bidPrice" DECIMAL(20,8) NOT NULL,
-    "askPrice" DECIMAL(20,8) NOT NULL,
-    "midPrice" DECIMAL(20,8) NOT NULL,
-    "originalBidPrice" DECIMAL(20,8) NOT NULL,
-    "originalAskPrice" DECIMAL(20,8) NOT NULL,
+    bid_price DECIMAL(20,8) NOT NULL,
+    ask_price DECIMAL(20,8) NOT NULL,
+    mid_price DECIMAL(20,8) NOT NULL,
+    original_bid_price DECIMAL(20,8) NOT NULL,
+    original_ask_price DECIMAL(20,8) NOT NULL,
     commission DECIMAL(5,4) NOT NULL,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -46,7 +46,7 @@ CREATE TRIGGER update_prices_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Insert some sample data for testing (optional)
--- INSERT INTO prices (symbol, "bidPrice", "askPrice", "midPrice", "originalBidPrice", "originalAskPrice", commission, timestamp)
+-- INSERT INTO prices (symbol, bid_price, ask_price, mid_price, original_bid_price, original_ask_price, commission, timestamp)
 -- VALUES ('BTCUSDT', 49950.00000000, 50150.10000000, 50050.05000000, 50000.00000000, 50100.00000000, 0.0001, CURRENT_TIMESTAMP);
 
 -- Create user for the application (optional, if you want separate user)

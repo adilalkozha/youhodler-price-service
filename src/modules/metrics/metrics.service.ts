@@ -82,7 +82,7 @@ export class MetricsService {
     
     if (success && price) {
       this.lastPriceUpdateTimestamp.setToCurrentTime();
-      this.currentBitcoinPrice.set(price);
+      this.currentBitcoinPrice.set(Math.round(price * 100) / 100);
     }
   }
 

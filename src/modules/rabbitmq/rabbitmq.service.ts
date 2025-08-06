@@ -1,4 +1,4 @@
-import { Injectable, Inject, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,7 @@ export interface PriceUpdateMessage {
 }
 
 @Injectable()
-export class RabbitmqService implements OnModuleDestroy {
+export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RabbitmqService.name);
 
   constructor(
