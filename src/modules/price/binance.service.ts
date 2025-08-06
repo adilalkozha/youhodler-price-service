@@ -7,7 +7,7 @@ import {
   BinanceErrorCodes,
   BinanceClientConfig,
   BinanceSymbol
-} from '../../features/price/types';
+} from '../../types';
 import { MetricsService } from '../metrics/metrics.service';
 import { config } from '../../config';
 

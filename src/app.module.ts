@@ -8,8 +8,7 @@ import { MetricsModule } from './modules/metrics/metrics.module';
 import { RabbitmqModule } from './modules/rabbitmq/rabbitmq.module';
 import { StatusModule } from './modules/status/status.module';
 import { config } from './config';
-import { Price } from './features/price/models/Price';
-import { User } from './features/user/models/User';
+import { Price } from './models/Price';
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { User } from './features/user/models/User';
       username: config.database.username,
       password: config.database.password,
       database: config.database.name,
-      models: [Price, User],
+      models: [Price],
       autoLoadModels: true,
       synchronize: false,
     }),

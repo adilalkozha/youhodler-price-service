@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
 import { InjectModel } from '@nestjs/sequelize';
-import { Price } from '../../features/price/models/Price';
+import { Price } from '../../models/Price';
 
 @Injectable()
 export class DatabaseHealthIndicator extends HealthIndicator {

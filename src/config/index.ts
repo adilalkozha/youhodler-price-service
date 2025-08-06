@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import Joi from 'joi';
-import { AppConfig } from '../types';
+import { ConfigType } from '../types';
 
 dotenv.config();
 
@@ -33,7 +33,7 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
-export const config: AppConfig = {
+export const config: ConfigType = {
   port: envVars.PORT,
   updateInterval: envVars.UPDATE_INTERVAL,
   commission: envVars.SERVICE_COMMISSION,

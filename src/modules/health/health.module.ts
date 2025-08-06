@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { HealthController } from './health.controller';
 import { DatabaseHealthIndicator } from './database-health.indicator';
 import { BinanceHealthIndicator } from './binance-health.indicator';
-import { Price } from '../../features/price/models/Price';
+import { Price } from '../../models/Price';
 import { PriceModule } from '../price/price.module';
 
 @Module({

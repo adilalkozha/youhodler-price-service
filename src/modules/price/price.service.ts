@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { Price } from '../../features/price/models/Price';
+import { Price, PriceRecord } from '../../models/Price';
 import { BinanceService } from './binance.service';
 import { PriceCalculatorService } from './price-calculator.service';
 import { MetricsService } from '../metrics/metrics.service';
-import { PriceRecord, ProcessedPrice } from '../../features/price/types';
+import { ProcessedPrice } from '../../types';
 import { config } from '../../config';
 
 @Injectable()
