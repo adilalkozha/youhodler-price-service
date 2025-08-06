@@ -12,24 +12,6 @@ Enterprise-grade microservice for Bitcoin price tracking with PostgreSQL persist
 - **RESTful API**: Clean HTTP API with comprehensive error handling
 - **Docker Support**: Full containerization with multi-stage builds
 - **TypeScript**: Fully typed codebase with strict type checking
-- **Production Ready**: Graceful shutdown, health checks, and monitoring
-
-## Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Binance API   │    │  Background     │    │   PostgreSQL    │
-│                 │◄───┤  Worker         ├───►│   Database      │
-│  Price Source   │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                               │
-                               ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   HTTP API      │    │  Price Service  │    │   Prometheus    │
-│                 │◄───┤                 ├───►│   Metrics       │
-│  REST Endpoints │    │  Business Logic │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
 
 ## Quick Start
 
