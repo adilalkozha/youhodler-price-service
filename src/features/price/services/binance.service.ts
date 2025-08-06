@@ -8,6 +8,7 @@ import {
   BinanceClientConfig,
   BinanceSymbol
 } from '../../types';
+import { MetricsService } from '../../../modules/metrics/metrics.service';
 import { config } from '../../config';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class BinanceService {
   private readonly client: AxiosInstance;
   private readonly binanceConfig: BinanceClientConfig;
 
-  constructor() {
+  constructor(private readonly metricsService: MetricsService) {
     this.binanceConfig = {
       baseUrl: config.binance.baseUrl,
       symbol: config.binance.symbol,
@@ -73,6 +74,7 @@ export class BinanceService {
 
   async getBookTicker(symbol?: BinanceSymbol): Promise<BinanceTickerResponse> {
     const targetSymbol = symbol || this.binanceConfig.symbol;
+    const startTime = Date.now();
     
     try {
       this.validateSymbol(targetSymbol);
@@ -83,6 +85,9 @@ export class BinanceService {
 
       this.validateTickerResponse(response.data);
 
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsService.updateBinanceMetrics(true, duration);
+
       this.logger.log(`Successfully fetched price for ${targetSymbol}`, {
         bidPrice: response.data.bidPrice,
         askPrice: response.data.askPrice,
@@ -90,6 +95,8 @@ export class BinanceService {
 
       return response.data;
     } catch (error) {
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsService.updateBinanceMetrics(false, duration);
       const errorMessage = this.handleBinanceError(error, 'getBookTicker', targetSymbol);
       throw new Error(errorMessage);
     }

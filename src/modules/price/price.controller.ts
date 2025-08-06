@@ -48,7 +48,7 @@ export class PriceController {
 
   @Get('history')
   async getPriceHistory(@Query('limit') limitStr?: string) {
-    const limit = parseInt(limitStr) || 100;
+    const limit = parseInt(limitStr || '100') || 100;
     
     if (limit < 1 || limit > 1000) {
       throw new BadRequestException('Limit must be between 1 and 1000');

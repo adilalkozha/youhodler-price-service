@@ -1,0 +1,215 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Bitcoin Price Service Dashboard",
+    "description": "YouHodler Bitcoin Price Service Monitoring",
+    "tags": ["bitcoin", "price", "youhodler"],
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "version": 1,
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "templating": {
+      "list": []
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Bitcoin Price (BTCUSDT)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "current_bitcoin_price",
+            "refId": "A",
+            "legendFormat": "Bitcoin Price"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD",
+            "decimals": 2
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Price Update Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(price_updates_total{status=\"success\"}[5m])",
+            "refId": "A",
+            "legendFormat": "Price Updates/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "decimals": 3,
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 50},
+                {"color": "red", "value": 100}
+              ]
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "value"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Bitcoin Price Trend",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "current_bitcoin_price",
+            "refId": "A",
+            "legendFormat": "Bitcoin Price"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD",
+            "decimals": 2
+          }
+        },
+        "options": {
+          "tooltip": {
+            "mode": "single"
+          },
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Service Health Metrics",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"bitcoin-price-service\"}",
+            "refId": "A",
+            "legendFormat": "Service Up"
+          },
+          {
+            "expr": "process_resident_memory_bytes{job=\"bitcoin-price-service\"} / 1024 / 1024",
+            "refId": "B",
+            "legendFormat": "Memory (MB)"
+          },
+          {
+            "expr": "rate(http_requests_total{job=\"bitcoin-price-service\"}[5m])",
+            "refId": "C",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "decimals": 2
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 5,
+        "title": "Binance API Metrics",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(binance_api_requests_total{status=\"success\"}[5m])",
+            "refId": "A",
+            "legendFormat": "API Requests/sec"
+          },
+          {
+            "expr": "rate(binance_api_requests_total{status=\"error\"}[5m])",
+            "refId": "B",
+            "legendFormat": "API Errors/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "decimals": 3
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        }
+      }
+    ]
+  },
+  "overwrite": true
+}

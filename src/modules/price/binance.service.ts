@@ -7,7 +7,8 @@ import {
   BinanceErrorCodes,
   BinanceClientConfig,
   BinanceSymbol
-} from '../../types';
+} from '../../features/price/types';
+import { MetricsService } from '../metrics/metrics.service';
 import { config } from '../../config';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class BinanceService {
   private readonly client: AxiosInstance;
   private readonly binanceConfig: BinanceClientConfig;
 
-  constructor() {
+  constructor(private readonly metricsService: MetricsService) {
     this.binanceConfig = {
       baseUrl: config.binance.baseUrl,
       symbol: config.binance.symbol,
@@ -27,7 +28,7 @@ export class BinanceService {
 
     this.client = axios.create({
       baseURL: this.binanceConfig.baseUrl,
-      timeout: this.binanceConfig.timeout,
+      timeout: this.binanceConfig.timeout || 5000,
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'youhodler-price-service/1.0.0'
@@ -41,7 +42,7 @@ export class BinanceService {
     this.client.interceptors.request.use(
       (config) => {
         const startTime = Date.now();
-        config.metadata = { startTime };
+        (config as any).metadata = { startTime };
         this.logger.debug(`Making request to: ${config.url}`, {
           method: config.method?.toUpperCase(),
           params: config.params
@@ -56,7 +57,7 @@ export class BinanceService {
 
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        const duration = Date.now() - (response.config.metadata?.startTime || 0);
+        const duration = Date.now() - ((response.config as any).metadata?.startTime || 0);
         this.logger.debug(`Response received from: ${response.config.url}`, {
           status: response.status,
           duration: `${duration}ms`
@@ -73,6 +74,7 @@ export class BinanceService {
 
   async getBookTicker(symbol?: BinanceSymbol): Promise<BinanceTickerResponse> {
     const targetSymbol = symbol || this.binanceConfig.symbol;
+    const startTime = Date.now();
     
     try {
       this.validateSymbol(targetSymbol);
@@ -83,6 +85,9 @@ export class BinanceService {
 
       this.validateTickerResponse(response.data);
 
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsService.updateBinanceMetrics(true, duration);
+
       this.logger.log(`Successfully fetched price for ${targetSymbol}`, {
         bidPrice: response.data.bidPrice,
         askPrice: response.data.askPrice,
@@ -90,6 +95,8 @@ export class BinanceService {
 
       return response.data;
     } catch (error) {
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsService.updateBinanceMetrics(false, duration);
       const errorMessage = this.handleBinanceError(error, 'getBookTicker', targetSymbol);
       throw new Error(errorMessage);
     }
@@ -139,9 +146,9 @@ export class BinanceService {
   private formatAxiosError(error: AxiosError): BinanceApiError {
     return {
       message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      code: error.code,
+      status: error.response?.status || 500,
+      statusText: error.response?.statusText || 'Unknown Error',
+      code: error.code || 'UNKNOWN_ERROR',
       data: error.response?.data as any
     };
   }

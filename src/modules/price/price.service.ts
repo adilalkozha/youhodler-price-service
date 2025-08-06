@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { Price } from '../../models/Price';
+import { Price } from '../../features/price/models/Price';
 import { BinanceService } from './binance.service';
 import { PriceCalculatorService } from './price-calculator.service';
-import { PriceRecord, ProcessedPrice } from '../../types';
+import { MetricsService } from '../metrics/metrics.service';
+import { PriceRecord, ProcessedPrice } from '../../features/price/types';
 import { config } from '../../config';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class PriceService {
     private readonly priceModel: typeof Price,
     private readonly binanceService: BinanceService,
     private readonly priceCalculatorService: PriceCalculatorService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async fetchAndStorePriceData(): Promise<PriceRecord> {
@@ -28,6 +30,8 @@ export class PriceService {
       
       const priceRecord = await this.storePriceData(ticker, processedPrice);
       
+      this.metricsService.updatePriceMetrics(true, priceRecord.midPrice);
+      
       this.logger.log(`Successfully stored price data for ${this.symbol}`, {
         id: priceRecord.id,
         midPrice: priceRecord.midPrice,
@@ -35,6 +39,7 @@ export class PriceService {
       
       return priceRecord;
     } catch (error) {
+      this.metricsService.updatePriceMetrics(false);
       this.logger.error('Failed to fetch and store price data:', error);
       throw error;
     }

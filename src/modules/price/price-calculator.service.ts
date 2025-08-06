@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BinanceTickerResponse, ProcessedPrice } from '../../types';
+import { BinanceTickerResponse, ProcessedPrice } from '../../features/price/types';
 import { config } from '../../config';
 
 @Injectable()

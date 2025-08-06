@@ -2,12 +2,13 @@ import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } fro
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { PriceService } from '../price/price.service';
 import { RabbitmqService, PriceUpdateMessage } from './rabbitmq.service';
+import { MetricsService } from '../metrics/metrics.service';
 import { config } from '../../config';
 
 @Injectable()
 export class PriceWorkerService implements OnApplicationBootstrap, OnApplicationShutdown {
   private readonly logger = new Logger(PriceWorkerService.name);
-  private workerInterval?: NodeJS.Timeout;
+  private workerInterval: NodeJS.Timeout | null = null;
   private isRunning = false;
   private consecutiveErrors = 0;
   private readonly maxRetries = 3;
@@ -15,6 +16,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
   constructor(
     private readonly priceService: PriceService,
     private readonly rabbitmqService: RabbitmqService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -34,6 +36,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
     this.logger.log(`Starting background worker with interval: ${config.updateInterval}ms`);
     this.isRunning = true;
     this.consecutiveErrors = 0;
+    this.metricsService.updateWorkerMetrics(true, 0);
 
     this.workerInterval = setInterval(async () => {
       try {
@@ -41,6 +44,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
       } catch (error) {
         this.logger.error('Worker error:', error);
         this.consecutiveErrors++;
+        this.metricsService.updateWorkerMetrics(true, this.consecutiveErrors);
         
         if (this.consecutiveErrors >= this.maxRetries) {
           this.logger.error(`Worker stopped after ${this.maxRetries} consecutive errors`);
@@ -63,10 +67,11 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
 
     this.logger.log('Stopping background worker');
     this.isRunning = false;
+    this.metricsService.updateWorkerMetrics(false, this.consecutiveErrors);
 
     if (this.workerInterval) {
       clearInterval(this.workerInterval);
-      this.workerInterval = undefined;
+      this.workerInterval = null;
     }
   }
 
@@ -74,6 +79,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
     try {
       const priceRecord = await this.priceService.fetchAndStorePriceData();
       this.consecutiveErrors = 0;
+      this.metricsService.updateWorkerMetrics(true, 0);
 
       this.rabbitmqService.sendPriceUpdateMessage({
         symbol: priceRecord.symbol,

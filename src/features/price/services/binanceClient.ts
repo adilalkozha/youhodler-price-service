@@ -35,7 +35,7 @@ export class BinanceClient {
 
     this.client = axios.create({
       baseURL: this.config.baseUrl,
-      timeout: this.config.timeout,
+      timeout: this.config.timeout || 10000,
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'youhodler-price-service/1.0.0'
@@ -49,7 +49,7 @@ export class BinanceClient {
     this.client.interceptors.request.use(
       (config) => {
         const startTime = Date.now();
-        config.metadata = { startTime };
+        (config as any).metadata = { startTime };
         logger.debug(`Making request to: ${config.url}`, {
           method: config.method?.toUpperCase(),
           params: config.params
@@ -64,7 +64,7 @@ export class BinanceClient {
 
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        const duration = Date.now() - (response.config.metadata?.startTime || 0);
+        const duration = Date.now() - ((response.config as any).metadata?.startTime || 0);
         logger.debug(`Response received from: ${response.config.url}`, {
           status: response.status,
           duration: `${duration}ms`
@@ -147,9 +147,9 @@ export class BinanceClient {
   private formatAxiosError(error: AxiosError): BinanceApiError {
     return {
       message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      code: error.code,
+      status: error.response?.status || 500,
+      statusText: error.response?.statusText || 'Unknown Error',
+      code: error.code || 'UNKNOWN_ERROR',
       data: error.response?.data as any
     };
   }
@@ -199,11 +199,4 @@ export class BinanceClient {
   }
 }
 
-// Extend AxiosRequestConfig to include metadata
-declare module 'axios' {
-  interface AxiosRequestConfig {
-    metadata?: {
-      startTime?: number;
-    };
-  }
-}
+export default BinanceClient;
