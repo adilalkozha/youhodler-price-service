@@ -1,0 +1,129 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.js text eol=lf
+*.ts text eol=lf
+*.jsx text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.sql text eol=lf
+
+# Configuration files
+*.conf text eol=lf
+*.config text eol=lf
+*.ini text eol=lf
+*.toml text eol=lf
+*.env text eol=lf
+*.example text eol=lf
+
+# Documentation
+*.txt text eol=lf
+*.rtf text eol=lf
+README text eol=lf
+CHANGELOG text eol=lf
+LICENSE text eol=lf
+CONTRIBUTING text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+*.ps1 text eol=crlf
+
+# Windows specific
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Docker
+Dockerfile text eol=lf
+*.dockerignore text eol=lf
+
+# Git
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.gitmodules text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# Archives
+*.tar binary
+*.tgz binary
+*.rar binary
+*.jar binary
+
+# Fonts
+*.otf binary
+
+# Images
+*.svg text eol=lf
+*.eps binary
+*.ai binary
+*.psd binary
+
+# Data files
+*.csv text eol=lf
+*.tsv text eol=lf
+
+# Language specific
+*.py text eol=lf
+*.rb text eol=lf
+*.go text eol=lf
+*.rs text eol=lf
+*.php text eol=lf
+*.java text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+
+# Package files
+package.json text eol=lf
+package-lock.json text eol=lf linguist-generated=true
+yarn.lock text eol=lf linguist-generated=true
+pnpm-lock.yaml text eol=lf linguist-generated=true
+
+# Generated files
+*.map linguist-generated=true
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+
+# Ignore in language statistics
+*.generated.* linguist-generated=true
+**/node_modules/** linguist-vendored=true
+**/dist/** linguist-generated=true
+**/build/** linguist-generated=true
+**/coverage/** linguist-generated=true

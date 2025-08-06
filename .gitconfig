@@ -1,0 +1,124 @@
+[core]
+    # Use the commit message template
+    template = .gitmessage
+    
+    # Configure line endings
+    autocrlf = false
+    eol = lf
+    
+    # Set the default editor
+    editor = code --wait
+    
+    # Ignore file mode changes (useful for cross-platform development)
+    filemode = false
+    
+    # Use .gitattributes for handling line endings
+    attributesfile = .gitattributes
+
+[push]
+    # Push only the current branch by default
+    default = current
+    
+    # Follow tags when pushing
+    followTags = true
+
+[pull]
+    # Use rebase instead of merge when pulling
+    rebase = true
+
+[fetch]
+    # Automatically prune deleted remote branches
+    prune = true
+
+[merge]
+    # Include commit summaries in merge commits
+    log = true
+    
+    # Use VS Code as merge tool
+    tool = vscode
+
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+
+[diff]
+    # Use VS Code as diff tool
+    tool = vscode
+
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+
+[branch]
+    # Automatically set up tracking when creating new branches
+    autoSetupMerge = always
+    autoSetupRebase = always
+
+[status]
+    # Show untracked files in directories
+    showUntrackedFiles = all
+
+[log]
+    # Show dates in log
+    date = relative
+
+[alias]
+    # Common shortcuts
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = !gitk
+    
+    # Pretty log formats
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lga = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+    
+    # Show modified files in last commit
+    dl = "!git ll -1"
+    
+    # Show a diff last commit
+    dlc = diff --cached HEAD^
+    
+    # Show content of a file at specific revision
+    grep = grep -Ii
+    
+    # Cleanup merged branches
+    cleanup = "!git branch --merged | grep -v '\\*\\|master\\|main\\|develop' | xargs -n 1 git branch -d"
+    
+    # Amend the currently staged files to the latest commit
+    amend = commit --amend --reuse-message=HEAD
+    
+    # Interactive rebase with the given number of latest commits
+    reb = "!r() { git rebase -i HEAD~$1; }; r"
+    
+    # Find branches containing commit
+    fb = "!f() { git branch -a --contains $1; }; f"
+    
+    # Find tags containing commit
+    ft = "!f() { git describe --always --contains $1; }; f"
+    
+    # Find commits by source code
+    fc = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short -S$1; }; f"
+    
+    # Find commits by commit message
+    fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan

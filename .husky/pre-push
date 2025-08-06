@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run all tests before pushing
+npm run test
+
+# Build check
+npm run build
+
+# Security audit
+npm audit --audit-level high
+
+# Check for outdated dependencies (warning only)
+npm outdated || true
+
+echo "✅ All pre-push checks passed!"
