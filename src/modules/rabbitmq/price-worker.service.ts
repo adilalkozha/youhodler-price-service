@@ -53,10 +53,8 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
       }
     }, config.updateInterval);
 
-    this.rabbitmqService.emitPriceFetchEvent(config.binance.symbol).subscribe({
-      next: () => this.logger.debug('Initial price fetch event emitted'),
-      error: (error) => this.logger.error('Failed to emit initial fetch event:', error)
-    });
+    // Initial price fetch will be handled by the setInterval worker
+    this.logger.debug('Background worker started successfully');
   }
 
   private stopWorker(): void {
@@ -81,13 +79,10 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
       this.consecutiveErrors = 0;
       this.metricsService.updateWorkerMetrics(true, 0);
 
-      this.rabbitmqService.sendPriceUpdateMessage({
+      // Price update completed successfully - no need to send self-message
+      this.logger.debug('Price data fetched and stored successfully', {
         symbol: priceRecord.symbol,
-        timestamp: priceRecord.timestamp,
-        action: 'fetch'
-      }).subscribe({
-        next: () => this.logger.debug('Price update message sent'),
-        error: (error) => this.logger.error('Failed to send price update message:', error)
+        timestamp: priceRecord.timestamp
       });
 
     } catch (error) {

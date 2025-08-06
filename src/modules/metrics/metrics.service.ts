@@ -76,13 +76,18 @@ export class MetricsService {
     this.binanceApiRequestDuration.observe(duration);
   }
 
+
   updatePriceMetrics(success: boolean, price?: number): void {
     const status = success ? 'success' : 'error';
     this.priceUpdatesTotal.labels(status).inc();
     
-    if (success && price) {
+    if (success && price !== undefined) {
       this.lastPriceUpdateTimestamp.setToCurrentTime();
-      this.currentBitcoinPrice.set(Math.round(price * 100) / 100);
+      // Ensure price is converted to a number
+      const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+      if (!isNaN(numericPrice)) {
+        this.currentBitcoinPrice.set(numericPrice);
+      }
     }
   }
 
@@ -94,6 +99,7 @@ export class MetricsService {
   updateHttpMetrics(method: string, route: string, statusCode: string, duration: number): void {
     this.httpRequestDuration
       .labels(method, route, statusCode)
+
       .observe(duration);
     
     this.httpRequestsTotal
