@@ -12,7 +12,6 @@ Enterprise-grade microservice for Bitcoin price tracking with PostgreSQL persist
 - **RESTful API**: Clean HTTP API with comprehensive error handling
 - **Docker Support**: Full containerization with multi-stage builds
 - **TypeScript**: Fully typed codebase with strict type checking
-- **Comprehensive Testing**: Unit and integration tests with high coverage
 - **Production Ready**: Graceful shutdown, health checks, and monitoring
 
 ## Architecture
@@ -145,9 +144,6 @@ Configure via environment variables:
 npm run build          # Build TypeScript
 npm run start          # Start production server
 npm run dev            # Start development server with hot reload
-npm run test           # Run tests
-npm run test:watch     # Run tests in watch mode
-npm run test:coverage  # Run tests with coverage report
 npm run lint           # Run ESLint
 npm run lint:fix       # Run ESLint with auto-fix
 npm run typecheck      # Run TypeScript type checking
@@ -159,28 +155,8 @@ npm run typecheck      # Run TypeScript type checking
 make help              # Show all available commands
 make dev               # Start development environment
 make prod              # Start production environment
-make test              # Run tests
 make clean             # Clean build artifacts
 ```
-
-## Testing
-
-### Unit Tests
-```bash
-npm test
-```
-
-### Integration Tests
-```bash
-npm run test:coverage
-```
-
-### Test Coverage
-The project maintains high test coverage for critical business logic:
-- Price calculation with commission
-- Binance API client error handling
-- HTTP API endpoints
-- Background worker resilience
 
 ## Monitoring
 
