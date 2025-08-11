@@ -27,8 +27,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
 
-  // Removed RMQ microservice connection as RabbitMQ features are no longer used
-  
   const gracefulShutdown = async (signal: string): Promise<void> => {
     logger.log(`${signal} received. Starting graceful shutdown...`);
     await app.close();

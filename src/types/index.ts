@@ -31,7 +31,6 @@ export interface BinanceTickerResponse {
 }
 
 export interface BinancePingResponse {
-  // Empty object response from Binance ping endpoint
 }
 
 export interface BinanceApiError {

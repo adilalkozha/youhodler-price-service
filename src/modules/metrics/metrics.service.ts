@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { register, Counter, Histogram, Gauge } from 'prom-client';
+import { register, Counter, Histogram, Gauge, collectDefaultMetrics } from 'prom-client';
 
 @Injectable()
 export class MetricsService {
@@ -14,6 +14,7 @@ export class MetricsService {
   public readonly consecutiveErrors: Gauge<string>;
 
   constructor() {
+    collectDefaultMetrics({ register });
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'Duration of HTTP requests in seconds',
@@ -83,7 +84,6 @@ export class MetricsService {
     
     if (success && price !== undefined) {
       this.lastPriceUpdateTimestamp.setToCurrentTime();
-      // Ensure price is converted to a number
       const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
       if (!isNaN(numericPrice)) {
         this.currentBitcoinPrice.set(numericPrice);

@@ -51,6 +51,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
         }
       }
     }, updateInterval);
+
     this.logger.debug('Background worker started successfully');
   }
 

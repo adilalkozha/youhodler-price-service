@@ -68,7 +68,6 @@ export class PriceCalculatorService {
     return Math.round(value * factor) / factor;
   }
 
-  // Public helper to round to 4 decimals for consistent API formatting
   roundToFourDecimals(value: number): number {
     return this.roundToDecimals(value, 4);
   }
