@@ -12,24 +12,6 @@ Enterprise-grade microservice for Bitcoin price tracking with PostgreSQL persist
 - **RESTful API**: Clean HTTP API with comprehensive error handling
 - **Docker Support**: Full containerization with multi-stage builds
 - **TypeScript**: Fully typed codebase with strict type checking
-- **Production Ready**: Graceful shutdown, health checks, and monitoring
-
-## Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Binance API   │    │  Background     │    │   PostgreSQL    │
-│                 │◄───┤  Worker         ├───►│   Database      │
-│  Price Source   │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                               │
-                               ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   HTTP API      │    │  Price Service  │    │   Prometheus    │
-│                 │◄───┤                 ├───►│   Metrics       │
-│  REST Endpoints │    │  Business Logic │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
 
 ## Quick Start
 
@@ -193,49 +175,6 @@ docker-compose logs -f app
 docker-compose up -d --scale app=3
 ```
 
-### Kubernetes
-The service is Kubernetes-ready with:
-- Health check endpoints
-- Graceful shutdown handling
-- Configurable resource limits
-- StatefulSet support for database
-
-### Security Features
-- Non-root container user
-- Input validation with Joi
-- SQL injection protection via Sequelize ORM
-- Rate limiting ready (add middleware)
-- CORS configuration
-- Security headers (add helmet middleware)
-
-## Architecture Decisions
-
-### Why PostgreSQL?
-- **Reliability**: ACID compliance for financial data
-- **Scalability**: Handles high-frequency price updates
-- **Analytics**: Rich querying capabilities for price history
-- **Observability**: Built-in monitoring and logging
-
-### Why Background Worker?
-- **Reliability**: Independent of HTTP requests
-- **Fault Tolerance**: Exponential backoff on failures
-- **Performance**: Non-blocking price updates
-- **Monitoring**: Dedicated metrics for worker health
-
-### Why Prometheus Metrics?
-- **Industry Standard**: Compatible with monitoring stacks
-- **Real-time**: Live metrics for operational insights
-- **Alerting**: Integration with AlertManager
-- **Grafana**: Ready for visualization dashboards
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ### Code Style
 - TypeScript with strict mode
 - ESLint with TypeScript rules
@@ -245,10 +184,3 @@ The service is Kubernetes-ready with:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support and questions:
-- Create an issue in the repository
-- Check the logs: `docker-compose logs -f app`
-- Review health check: `curl http://localhost:3000/health`
