@@ -1,6 +1,7 @@
 import { Controller, Get, Query, BadRequestException, ServiceUnavailableException, Logger } from '@nestjs/common';
 import { PriceService } from './price.service';
 import { MetricsService } from '../metrics/metrics.service';
+import { PriceCalculatorService } from './price-calculator.service';
 
 @Controller('api/v1/price')
 export class PriceController {
@@ -9,6 +10,7 @@ export class PriceController {
   constructor(
     private readonly priceService: PriceService,
     private readonly metricsService: MetricsService,
+    private readonly priceCalculator: PriceCalculatorService,
   ) {}
 
   @Get()
@@ -21,21 +23,22 @@ export class PriceController {
       throw new ServiceUnavailableException('No price data available. Please try again later.');
     }
 
-    this.metricsService.currentBitcoinPrice.set(parseFloat(latestPrice.midPrice.toString()));
+    this.metricsService.currentBitcoinPrice.set(latestPrice.midPrice);
 
     const responseData = {
       success: true,
       data: {
         symbol: latestPrice.symbol,
-        bidPrice: parseFloat(latestPrice.bidPrice.toString()),
-        askPrice: parseFloat(latestPrice.askPrice.toString()),
-        midPrice: parseFloat(latestPrice.midPrice.toString()),
+        bidPrice: latestPrice.bidPrice,
+        askPrice: latestPrice.askPrice,
+        midPrice: latestPrice.midPrice,
         timestamp: latestPrice.timestamp,
-        commission: parseFloat(latestPrice.commission.toString()),
-        spread: parseFloat((latestPrice.askPrice - latestPrice.bidPrice).toFixed(8)),
-        spreadPercentage: parseFloat(
-          (((latestPrice.askPrice - latestPrice.bidPrice) / latestPrice.midPrice) * 100).toFixed(4)
-        ),
+        commission: latestPrice.commission,
+        spread: this.priceCalculator.calculateSpread(latestPrice.bidPrice, latestPrice.askPrice),
+        spreadPercentage: this.priceCalculator
+          .roundToFourDecimals(
+            this.priceCalculator.calculateSpreadPercentage(latestPrice.bidPrice, latestPrice.askPrice)
+          ),
       },
       meta: {
         lastUpdated: latestPrice.timestamp,

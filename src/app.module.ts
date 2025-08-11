@@ -5,7 +5,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { PriceModule } from './modules/price/price.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
-import { RabbitmqModule } from './modules/rabbitmq/rabbitmq.module';
+import { WorkerModule } from './modules/rabbitmq/rabbitmq.module';
 import { StatusModule } from './modules/status/status.module';
 import { config } from './config';
 import { Price } from './models/Price';
@@ -30,7 +30,7 @@ import { Price } from './models/Price';
     PriceModule,
     HealthModule,
     MetricsModule,
-    RabbitmqModule,
+    WorkerModule,
     StatusModule,
   ],
 })

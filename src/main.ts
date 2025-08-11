@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
 import { MetricsService } from './modules/metrics/metrics.service';
 import { config } from './config';
@@ -27,18 +26,7 @@ async function bootstrap() {
   const metricsService = app.get(MetricsService);
   app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
 
-  const microservice = app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [config.rabbitmq?.url || 'amqp://localhost:5672'],
-      queue: 'price_queue',
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
-
-  await app.startAllMicroservices();
+  // Removed RMQ microservice connection as RabbitMQ features are no longer used
   
   const gracefulShutdown = async (signal: string): Promise<void> => {
     logger.log(`${signal} received. Starting graceful shutdown...`);

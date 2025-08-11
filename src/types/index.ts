@@ -13,9 +13,6 @@ export interface ConfigType {
     baseUrl: string;
     symbol: string;
   };
-  rabbitmq: {
-    url: string;
-  };
 }
 
 export interface ProcessedPrice {

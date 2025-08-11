@@ -1,7 +1,5 @@
 import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { PriceService } from '../price/price.service';
-import { RabbitmqService, PriceUpdateMessage } from './rabbitmq.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { config } from '../../config';
 
@@ -15,7 +13,6 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
 
   constructor(
     private readonly priceService: PriceService,
-    private readonly rabbitmqService: RabbitmqService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -91,32 +88,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
     }
   }
 
-  @MessagePattern('price.update')
-  handlePriceUpdate(@Payload() data: PriceUpdateMessage) {
-    this.logger.debug('Received price update message', data);
-    return { success: true, timestamp: new Date() };
-  }
-
-  @EventPattern('price.fetch')
-  async handlePriceFetch(@Payload() data: PriceUpdateMessage) {
-    this.logger.debug('Received price fetch event', data);
-    try {
-      await this.fetchAndStorePrice();
-    } catch (error) {
-      this.logger.error('Failed to handle price fetch event:', error);
-    }
-  }
-
-  @EventPattern('price.cleanup')
-  async handlePriceCleanup(@Payload() data: PriceUpdateMessage) {
-    this.logger.debug('Received price cleanup event', data);
-    try {
-      const deletedCount = await this.priceService.cleanupOldPrices(30);
-      this.logger.log(`Cleaned up ${deletedCount} old price records`);
-    } catch (error) {
-      this.logger.error('Failed to handle price cleanup event:', error);
-    }
-  }
+  // RabbitMQ handlers removed as RabbitMQ is not used in this service anymore
 
   getStatus() {
     return {

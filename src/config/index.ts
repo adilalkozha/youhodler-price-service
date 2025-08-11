@@ -18,9 +18,7 @@ const configSchema = Joi.object({
   
   BINANCE_BASE_URL: Joi.string().uri().default('https://api.binance.com'),
   BINANCE_SYMBOL: Joi.string().default('BTCUSDT'),
-  
-  RABBITMQ_URL: Joi.string().uri().default('amqp://localhost:5672'),
-  
+
   LOG_LEVEL: Joi.string().valid('error', 'warn', 'info', 'debug').default('info'),
 });
 
@@ -47,9 +45,6 @@ export const config: ConfigType = {
   binance: {
     baseUrl: envVars.BINANCE_BASE_URL,
     symbol: envVars.BINANCE_SYMBOL,
-  },
-  rabbitmq: {
-    url: envVars.RABBITMQ_URL,
   },
 };
 

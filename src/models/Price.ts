@@ -35,6 +35,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(20, 8),
     allowNull: false,
     field: 'bid_price',
+    get(this: Price) {
+      const value = this.getDataValue('bidPrice') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   bidPrice!: number;
 
@@ -42,6 +46,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(20, 8),
     allowNull: false,
     field: 'ask_price',
+    get(this: Price) {
+      const value = this.getDataValue('askPrice') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   askPrice!: number;
 
@@ -49,6 +57,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(20, 8),
     allowNull: false,
     field: 'mid_price',
+    get(this: Price) {
+      const value = this.getDataValue('midPrice') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   midPrice!: number;
 
@@ -56,6 +68,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(20, 8),
     allowNull: false,
     field: 'original_bid_price',
+    get(this: Price) {
+      const value = this.getDataValue('originalBidPrice') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   originalBidPrice!: number;
 
@@ -63,6 +79,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(20, 8),
     allowNull: false,
     field: 'original_ask_price',
+    get(this: Price) {
+      const value = this.getDataValue('originalAskPrice') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   originalAskPrice!: number;
 
@@ -70,6 +90,10 @@ export class Price extends Model implements PriceRecord {
     type: DataType.DECIMAL(10, 8),
     allowNull: false,
     field: 'commission',
+    get(this: Price) {
+      const value = this.getDataValue('commission') as unknown as string | number;
+      return typeof value === 'string' ? parseFloat(value) : value;
+    },
   })
   commission!: number;
 
