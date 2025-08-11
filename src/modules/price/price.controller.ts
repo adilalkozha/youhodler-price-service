@@ -2,6 +2,7 @@ import { Controller, Get, Query, BadRequestException, ServiceUnavailableExceptio
 import { PriceService } from './price.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { PriceCalculatorService } from './price-calculator.service';
+import { CurrentPriceResponseDto, PriceHistoryResponseDto } from './dto/price.dto';
 
 @Controller('api/v1/price')
 export class PriceController {
@@ -14,7 +15,7 @@ export class PriceController {
   ) {}
 
   @Get()
-  async getCurrentPrice() {
+  async getCurrentPrice(): Promise<CurrentPriceResponseDto> {
     this.logger.debug('GET /api/v1/price - Fetching current price');
 
     const latestPrice = await this.priceService.getLatestPrice();
@@ -25,7 +26,7 @@ export class PriceController {
 
     this.metricsService.currentBitcoinPrice.set(latestPrice.midPrice);
 
-    const responseData = {
+    const responseData: CurrentPriceResponseDto = {
       success: true,
       data: {
         symbol: latestPrice.symbol,
@@ -42,7 +43,7 @@ export class PriceController {
       },
       meta: {
         lastUpdated: latestPrice.timestamp,
-        recordId: latestPrice.id,
+        recordId: latestPrice.id as number,
       },
     };
 
@@ -56,7 +57,7 @@ export class PriceController {
   }
 
   @Get('history')
-  async getPriceHistory(@Query('limit') limitStr?: string) {
+  async getPriceHistory(@Query('limit') limitStr?: string): Promise<PriceHistoryResponseDto> {
     const limit = parseInt(limitStr || '100') || 100;
     
     if (limit < 1 || limit > 1000) {
@@ -67,15 +68,15 @@ export class PriceController {
 
     const priceHistory = await this.priceService.getPriceHistory(limit);
     
-    const responseData = {
+    const responseData: PriceHistoryResponseDto = {
       success: true,
       data: priceHistory.map(price => ({
-        id: price.id,
+        id: price.id as number,
         symbol: price.symbol,
-        bidPrice: parseFloat(price.bidPrice.toString()),
-        askPrice: parseFloat(price.askPrice.toString()),
-        midPrice: parseFloat(price.midPrice.toString()),
-        commission: parseFloat(price.commission.toString()),
+        bidPrice: price.bidPrice,
+        askPrice: price.askPrice,
+        midPrice: price.midPrice,
+        commission: price.commission,
         timestamp: price.timestamp,
       })),
       meta: {

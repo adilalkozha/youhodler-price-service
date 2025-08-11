@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { BinanceTickerResponse, ProcessedPrice } from '../../types';
-import { config } from '../../config';
 
 @Injectable()
 export class PriceCalculatorService {
   private readonly logger = new Logger(PriceCalculatorService.name);
   private commission: number;
 
-  constructor() {
-    this.commission = config.commission;
+  constructor(private readonly configService: ConfigService) {
+    this.commission = this.configService.get<number>('SERVICE_COMMISSION', 0.0001);
     
     if (this.commission < 0 || this.commission > 1) {
       throw new Error('Commission must be between 0 and 1');

@@ -6,12 +6,12 @@ import { BinanceService } from './binance.service';
 import { PriceCalculatorService } from './price-calculator.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { ProcessedPrice } from '../../types';
-import { config } from '../../config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PriceService {
   private readonly logger = new Logger(PriceService.name);
-  private readonly symbol = config.binance.symbol;
+  private readonly symbol: string;
 
   constructor(
     @InjectModel(Price)
@@ -19,7 +19,10 @@ export class PriceService {
     private readonly binanceService: BinanceService,
     private readonly priceCalculatorService: PriceCalculatorService,
     private readonly metricsService: MetricsService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.symbol = this.configService.get<string>('BINANCE_SYMBOL', 'BTCUSDT');
+  }
 
   async fetchAndStorePriceData(): Promise<PriceRecord> {
     try {

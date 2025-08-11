@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
 import { MetricsService } from './modules/metrics/metrics.service';
-import { config } from './config';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -24,6 +24,7 @@ async function bootstrap() {
   }));
 
   const metricsService = app.get(MetricsService);
+  const configService = app.get(ConfigService);
   app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
 
   // Removed RMQ microservice connection as RabbitMQ features are no longer used
@@ -37,12 +38,13 @@ async function bootstrap() {
   process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
   process.on('SIGINT', () => gracefulShutdown('SIGINT'));
   
-  await app.listen(config.port);
-  
-  logger.log(`🚀 Application is running on: http://localhost:${config.port}`);
-  logger.log(`📊 Health check: http://localhost:${config.port}/health`);
-  logger.log(`📈 Metrics: http://localhost:${config.port}/metrics`);
-  logger.log(`💰 Price API: http://localhost:${config.port}/api/v1/price`);
+  const port = configService.get<number>('PORT', 3000);
+  await app.listen(port);
+
+  logger.log(`🚀 Application is running on: http://localhost:${port}`);
+  logger.log(`📊 Health check: http://localhost:${port}/health`);
+  logger.log(`📈 Metrics: http://localhost:${port}/metrics`);
+  logger.log(`💰 Price API: http://localhost:${port}/api/v1/price`);
 }
 
 bootstrap().catch((error) => {

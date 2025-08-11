@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { PriceService } from '../price/price.service';
 import { MetricsService } from '../metrics/metrics.service';
-import { config } from '../../config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PriceWorkerService implements OnApplicationBootstrap, OnApplicationShutdown {
@@ -14,6 +14,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
   constructor(
     private readonly priceService: PriceService,
     private readonly metricsService: MetricsService,
+    private readonly configService: ConfigService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -30,7 +31,8 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
       return;
     }
 
-    this.logger.log(`Starting background worker with interval: ${config.updateInterval}ms`);
+    const updateInterval = this.configService.get<number>('UPDATE_INTERVAL', 10000);
+    this.logger.log(`Starting background worker with interval: ${updateInterval}ms`);
     this.isRunning = true;
     this.consecutiveErrors = 0;
     this.metricsService.updateWorkerMetrics(true, 0);
@@ -48,7 +50,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
           this.stopWorker();
         }
       }
-    }, config.updateInterval);
+    }, updateInterval);
 
     // Initial price fetch will be handled by the setInterval worker
     this.logger.debug('Background worker started successfully');
@@ -95,7 +97,7 @@ export class PriceWorkerService implements OnApplicationBootstrap, OnApplication
       isRunning: this.isRunning,
       consecutiveErrors: this.consecutiveErrors,
       maxRetries: this.maxRetries,
-      updateInterval: config.updateInterval,
+      updateInterval: this.configService.get<number>('UPDATE_INTERVAL', 10000),
     };
   }
 

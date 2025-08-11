@@ -9,7 +9,7 @@ import {
   BinanceSymbol
 } from '../../types';
 import { MetricsService } from '../metrics/metrics.service';
-import { config } from '../../config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BinanceService {
@@ -17,10 +17,13 @@ export class BinanceService {
   private readonly client: AxiosInstance;
   private readonly binanceConfig: BinanceClientConfig;
 
-  constructor(private readonly metricsService: MetricsService) {
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly configService: ConfigService,
+  ) {
     this.binanceConfig = {
-      baseUrl: config.binance.baseUrl,
-      symbol: config.binance.symbol,
+      baseUrl: this.configService.get<string>('BINANCE_BASE_URL', 'https://api.binance.com'),
+      symbol: this.configService.get<string>('BINANCE_SYMBOL', 'BTCUSDT'),
       timeout: 10000,
       retries: 3,
       retryDelay: 1000

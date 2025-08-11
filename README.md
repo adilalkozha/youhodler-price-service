@@ -21,7 +21,7 @@ Enterprise-grade microservice for Bitcoin price tracking with PostgreSQL persist
    ```bash
    git clone <repository-url>
    cd bitcoin-price-service
-   cp .env.example .env
+   cp .env.development .env
    ```
 
 2. **Start all services**:
@@ -48,7 +48,7 @@ Enterprise-grade microservice for Bitcoin price tracking with PostgreSQL persist
 
 3. **Setup environment**:
    ```bash
-   cp .env.example .env
+   cp .env.development .env
    # Edit .env with your database credentials
    ```
 
@@ -102,7 +102,7 @@ Service status and configuration.
 
 ## Configuration
 
-Configure via environment variables:
+Configure via environment variables (managed by @nestjs/config):
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -117,6 +117,12 @@ Configure via environment variables:
 | `BINANCE_BASE_URL` | Binance API base URL | `https://api.binance.com` |
 | `BINANCE_SYMBOL` | Trading symbol | `BTCUSDT` |
 | `LOG_LEVEL` | Logging level | `info` |
+
+You can use separate files per environment:
+
+- `.env.development` for local development
+- `.env.test` for tests (Jest loads it via `src/__tests__/setup.ts`)
+- `.env` for generic defaults (optional)
 
 ## Development
 

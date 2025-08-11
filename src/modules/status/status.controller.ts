@@ -1,10 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { PriceWorkerService } from '../rabbitmq/price-worker.service';
-import { config } from '../../config';
+import { PriceWorkerService } from '../worker/price-worker.service';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('api/v1/status')
 export class StatusController {
-  constructor(private readonly priceWorkerService: PriceWorkerService) {}
+  constructor(
+    private readonly priceWorkerService: PriceWorkerService,
+    private readonly configService: ConfigService,
+  ) { }
 
   @Get()
   getStatus() {
@@ -19,9 +22,9 @@ export class StatusController {
         timestamp: new Date().toISOString(),
         backgroundWorker: workerStatus,
         configuration: {
-          symbol: config.binance.symbol,
-          updateInterval: config.updateInterval,
-          commission: config.commission,
+          symbol: this.configService.get<string>('BINANCE_SYMBOL', 'BTCUSDT'),
+          updateInterval: this.configService.get<number>('UPDATE_INTERVAL', 10000),
+          commission: this.configService.get<number>('SERVICE_COMMISSION', 0.0001),
         },
       },
     };
